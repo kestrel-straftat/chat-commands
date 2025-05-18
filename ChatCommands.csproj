@@ -68,6 +68,14 @@
       <HintPath>..\Libs\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Include=".github\README.md" />
+    <None Include=".thunderstore\icon.png" />
+    <None Include=".thunderstore\LICENSE.txt" />
+    <None Include=".thunderstore\manifest.json" />
+    <None Include=".thunderstore\README.md" />
+  </ItemGroup>
 
   <Target Name="CopyDllToGame" AfterTargets="PostBuildEvent">
     <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFolder="$(appdata)\com.kesomannen.gale\straftat\profiles\Default\BepInEx\plugins\kestrel-Chat_Commands-dev" />
