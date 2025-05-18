@@ -26,8 +26,8 @@ see help text for a particular command, or a particular category of commands, en
 name as a parameter after the command name.
 
 If you want to enter something with spaces in it as a parameter, e.g. a sentence, surround the parameter with
-quotation marks (" or ') to create a string. If you want to enter another string inside a string (a sequence of
-characters), you can either use the type of quotation mark you did not use for the outer string, or enter a
+quotation marks (" or ') to create a string (a sequence of
+characters). If you want to enter another string inside a string, you can either use the type of quotation mark you did not use for the outer string, or enter a
 backslash (\\) before quotation marks you use inside the string.
 
 Some commands may have optional parameters. These parameters have a default value that will be chosen if you
