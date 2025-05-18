@@ -76,7 +76,11 @@ public static class Evaluator
         
         var providedCount = args.Length;
         if (providedCount < cmd.minParameters) {
-            SystemMessage($"Mismatched parameter counts: command \"{name}\" expects at least {cmd.minParameters}, {providedCount} {(providedCount == 1 ? "was" : "were")} provided.");
+            SystemMessage($"Mismatched parameter counts: command \"{name}\" expects at least {cmd.minParameters}, but {providedCount} {(providedCount == 1 ? "was" : "were")} provided.");
+            return null;
+        }
+        if (providedCount > cmd.maxParameters) {
+            SystemMessage($"Mismatched parameter counts: command \"{name}\" expects at most {cmd.maxParameters}, but {providedCount} {(providedCount == 1 ? "was" : "were")} provided.");
             return null;
         }
 
