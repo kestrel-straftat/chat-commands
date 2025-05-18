@@ -1,0 +1,9 @@
+.idea
+.releases
+bin/*
+obj/*
+*.user
+*.dll
+*.exe
+*.pdb
+*.zip
