@@ -71,6 +71,7 @@
   
   <ItemGroup>
     <None Include=".github\README.md" />
+    <None Include=".thunderstore\CHANGELOG.md" />
     <None Include=".thunderstore\icon.png" />
     <None Include=".thunderstore\LICENSE.txt" />
     <None Include=".thunderstore\manifest.json" />
