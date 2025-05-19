@@ -70,7 +70,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Include=".github\LICENSE.txt" />
     <None Include=".github\README.md" />
     <None Include=".thunderstore\icon.png" />
     <None Include=".thunderstore\LICENSE.txt" />
