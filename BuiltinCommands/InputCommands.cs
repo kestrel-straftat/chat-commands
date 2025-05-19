@@ -10,9 +10,8 @@ public static class InputCommands
 {
     [Command("jump", "triggers a jump")]
     public static void Jump() {
-        PauseManager.Instance.canChat = !PauseManager.Instance.canChat; // don't ask
+        PauseManager.Instance.chatting = false;
         Settings.Instance.localPlayer.Jump(new InputAction.CallbackContext());
-        PauseManager.Instance.canChat = !PauseManager.Instance.canChat;
     }
     
     private static int m_mouseDownFrames;
