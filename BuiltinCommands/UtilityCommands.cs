@@ -105,10 +105,8 @@ public static class UtilityCommands
                 builder.AppendHelpTextForCommand(command);
                 
                 builder.AppendLine().AppendLine();
-
             }
         }
-
         return builder.ToString();
     }
 
