@@ -76,6 +76,7 @@ public static class UtilityCommands
                 // ok, try searching for commands with that category name
                 var commandsInCategory = CommandRegistry.Commands.Values
                     .Where(c => string.Equals(c.categoryName, commandOrCategoryName, StringComparison.InvariantCultureIgnoreCase))
+                    .Distinct()
                     .ToArray();
                 
                 if (commandsInCategory.Length == 0)
@@ -91,11 +92,9 @@ public static class UtilityCommands
         }
         // show help for all commands
         else {
-            // needed to ignore aliases as they're kept in the same array as the name
-            HashSet<Command> seenCommands = [];
             string currentCategory = "";
-            foreach (var command in CommandRegistry.Commands.Values.OrderBy(c => c.categoryName).ThenBy(c => c.name)) {
-                if (seenCommands.Contains(command)) continue;
+            // Distinct() needed to ignore aliases as they're kept in the same array as the name
+            foreach (var command in CommandRegistry.Commands.Values.OrderBy(c => c.categoryName).ThenBy(c => c.name).Distinct()) {
 
                 if (command.categoryName != currentCategory) {
                     currentCategory = command.categoryName;
@@ -107,7 +106,6 @@ public static class UtilityCommands
                 
                 builder.AppendLine().AppendLine();
 
-                seenCommands.Add(command);
             }
         }
 
