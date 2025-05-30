@@ -139,7 +139,7 @@ public static class AdminCommands
         private static List<PlayerListItem> m_playerListItems;
 
         public static void KickBannedPlayers(bool isHost) {
-            foreach (var player in m_playerListItems.Where(player => !m_bannedPlayers.Contains(player.PlayerSteamID))) {
+            foreach (var player in m_playerListItems.Where(player => m_bannedPlayers.Contains(player.PlayerSteamID))) {
                 if (isHost) {
                     PauseManager.Instance.WriteLog($"Kicked \"{player.PlayerName}\": banned from this lobby");
                     player.KickPlayer();
