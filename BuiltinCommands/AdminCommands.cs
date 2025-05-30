@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ChatCommands.Attributes;
+using FishNet;
+using FishNet.Managing;
 using HarmonyLib;
 using HeathenEngineering.DEMO;
 using HeathenEngineering.SteamworksIntegration;
@@ -83,7 +85,7 @@ public static class AdminCommands
         if (!m_bannedPlayers.Add(steamID))
             throw new CommandException($"\"{steamID}\" is already banned");
         
-        LobbyControllerPatch.KickBannedPlayers();
+        LobbyControllerPatch.KickBannedPlayers(InstanceFinder.NetworkManager.IsHost);
         SaveToJson();
         return $"banned {steamID}";
     }
@@ -131,27 +133,30 @@ public static class AdminCommands
         public static bool DontHandleIfIgnored(LobbyChatMsg message) => !m_ignoredPlayers.Contains(message.sender.SteamId);
     }
 
-    // look im really trying not to write spaghetti code but goddamn the games networking code is NOT HELPING
     [HarmonyPatch(typeof(LobbyController))]
     internal static class LobbyControllerPatch
     {
         private static List<PlayerListItem> m_playerListItems;
 
-        public static void KickBannedPlayers() {
-            foreach (var player in m_playerListItems.Where(player => m_bannedPlayers.Contains(player.PlayerSteamID))) {
-                // FIXME this doesnt show up for clients before they're kicked for some reason.
-                // its not that important but itd be nice if it did
-                PauseManager.Instance.WriteLog($"Kicked \"{player.PlayerName}\": banned from this lobby");
-                player.KickPlayer();
+        public static void KickBannedPlayers(bool isHost) {
+            foreach (var player in m_playerListItems.Where(player => !m_bannedPlayers.Contains(player.PlayerSteamID))) {
+                if (isHost) {
+                    PauseManager.Instance.WriteLog($"Kicked \"{player.PlayerName}\": banned from this lobby");
+                    player.KickPlayer();
+                }
+                else {
+                    PauseManager.Instance.WriteOfflineLog($"Warning: the player \"{player.PlayerName}\" is on your ban list!");
+                }
             }
         }
         
         [HarmonyPatch("Start")]
         [HarmonyPrefix]
         public static void CapturePlayerlist(List<PlayerListItem> ___PlayerListItems) => m_playerListItems = ___PlayerListItems;
-        
+
         [HarmonyPatch("CreateClientPlayerItem")]
+        [HarmonyPatch("CreateHostPlayerItem")]
         [HarmonyPostfix]
-        public static void HandleBans() => KickBannedPlayers();
+        public static void HandleBans() => KickBannedPlayers(InstanceFinder.NetworkManager.IsHost); 
     }
 }
