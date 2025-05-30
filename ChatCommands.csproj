@@ -27,10 +27,6 @@
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.16" IncludeAssets="compile" />
   </ItemGroup>
   
-  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
-  </ItemGroup>
-  
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\Libs\Assembly-CSharp-publicized.dll</HintPath>
@@ -71,12 +67,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Include=".github\README.md" />
-    <None Include=".thunderstore\CHANGELOG.md" />
-    <None Include=".thunderstore\icon.png" />
-    <None Include=".thunderstore\LICENSE.txt" />
-    <None Include=".thunderstore\manifest.json" />
-    <None Include=".thunderstore\README.md" />
+    <None Include=".github\**" />
+    <None Include=".thunderstore\**" />
   </ItemGroup>
 
   <Target Name="CopyDllToGame" AfterTargets="PostBuildEvent">
