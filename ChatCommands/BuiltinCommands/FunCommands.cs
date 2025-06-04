@@ -30,12 +30,14 @@ public static class FunCommands
 
     [Command("randomweapon", "spawns a random weapon", c_weaponCommandFlags)]
     [CommandAliases("rw")]
-    public static void RandomWeapon() {
-        var weapon = WeaponLoader.RandomWeapon();
+    public static void RandomWeapon(int count = 1) {
+        var weapons = WeaponLoader.RandomWeapons(count);
         var playerTransform = Settings.Instance.localPlayer.playerPickupScript.transform;
-        var obj = Object.Instantiate(weapon, playerTransform.position, playerTransform.rotation).gameObject;
-        InstanceFinder.ServerManager.Spawn(obj);
-        obj.GetComponent<ItemBehaviour>().DispenserDrop(Vector3.zero);
+        foreach (var weapon in weapons) {
+            var obj = Object.Instantiate(weapon, playerTransform.position, playerTransform.rotation).gameObject;
+            InstanceFinder.ServerManager.Spawn(obj);
+            obj.GetComponent<ItemBehaviour>().DispenserDrop(Vector3.zero);
+        }
     }
 
     private static bool m_weaponRainEnabled = false;
