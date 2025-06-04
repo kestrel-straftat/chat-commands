@@ -4,6 +4,7 @@
 - Improved `ban` command: the mod now warns you when joining the lobby of someone on your banlist
 - Removed `weapons` command
 - `weapon` command now takes an extra optional parameter: `count`
+- `randomweapon` command now takes an extra optional parameter: `count`
 
 ### v1.0.2
 
