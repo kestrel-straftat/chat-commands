@@ -14,12 +14,14 @@ public static class FunCommands
     
     [Command("weapon", "spawns a weapon", c_weaponCommandFlags)]
     [CommandAliases("w")]
-    public static void Weapon(string weaponName) {
+    public static void Weapon(string weaponName, int count = 1) {
         if (WeaponLoader.TryGetWeapon(weaponName, out var weapon)) {
             var playerTransform = Settings.Instance.localPlayer.playerPickupScript.transform;
-            var obj = Object.Instantiate(weapon, playerTransform.position, playerTransform.rotation).gameObject;
-            InstanceFinder.ServerManager.Spawn(obj);
-            obj.GetComponent<ItemBehaviour>().DispenserDrop(Vector3.zero);
+            for (int i = 0; i < count; ++i) {
+                var obj = Object.Instantiate(weapon, playerTransform.position, playerTransform.rotation).gameObject;
+                InstanceFinder.ServerManager.Spawn(obj);
+                obj.GetComponent<ItemBehaviour>().DispenserDrop(Vector3.zero);
+            }
         }
         else {
             throw new CommandException($"No weapon found with name {weaponName}");
@@ -62,21 +64,6 @@ public static class FunCommands
             obj.GetComponent<ItemBehaviour>().DispenserDrop(Vector3.zero);
 
             yield return new WaitForSeconds(0.1f);
-        }
-    }
-
-    [Command("weapons", "spawns a number of weapons", c_weaponCommandFlags)]
-    public static void Weapons(string weaponName, int count) {
-        if (WeaponLoader.TryGetWeapon(weaponName, out var weapon)) {
-            var playerTransform = Settings.Instance.localPlayer.playerPickupScript.transform;
-            for (int i = 0; i < count; ++i) {
-                var obj = Object.Instantiate(weapon, playerTransform.position, playerTransform.rotation).gameObject;
-                InstanceFinder.ServerManager.Spawn(obj);
-                obj.GetComponent<ItemBehaviour>().DispenserDrop(Vector3.zero);
-            }
-        }
-        else {
-            throw new CommandException($"No weapon found with name {weaponName}");
         }
     }
 
