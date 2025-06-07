@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace ChatCommands;
@@ -32,8 +33,12 @@ internal static class Utils
     public static bool AnyInputFieldFocused() {
         var currentSelected = EventSystem.current.currentSelectedGameObject;
         if (!currentSelected) return false;
-        var inputField = currentSelected.GetComponent<TMP_InputField>();
-        return inputField is not null && inputField.isFocused;
+        var tmpField = currentSelected.GetComponent<TMP_InputField>();
+        if (tmpField && tmpField.isFocused)
+            return true;
+
+        var unityField = currentSelected.GetComponent<InputField>();
+        return unityField && unityField.isFocused;
     }
     
     public static T LoadFromJsonFile<T>(string path) {

@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using System;
+using BepInEx;
 using BepInEx.Logging;
 using ChatCommands.BuiltinCommands;
 using ComputerysModdingUtilities;
@@ -33,6 +34,10 @@ internal class Plugin : BaseUnityPlugin
 
     private void Update() {
         BindingCommands.Update();
+    }
+
+    private void FixedUpdate() {
+        BindingCommands.FixedUpdate();
     }
 }
 

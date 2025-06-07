@@ -20,9 +20,14 @@ public static class BindingCommands
     
     private static Dictionary<KeyCode, List<string>> m_binds;
     private static string m_savePath = Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_GUID + ".binds.json");
+    private static bool m_shouldIgnoreInput = false;
     
     public static void Init() {
         m_binds = Utils.LoadFromJsonFile<Dictionary<KeyCode, List<string>>>(m_savePath) ?? [];
+    }
+
+    public static void FixedUpdate() {
+        m_shouldIgnoreInput = Utils.AnyInputFieldFocused();
     }
     
     public static void Update() {
@@ -36,9 +41,7 @@ public static class BindingCommands
                     break;
             }
         
-        // hopefully ignoring any input if no key was just pressed
-        // attones for me calling GetComponent() in an update function :3
-        if (!Input.anyKeyDown || Utils.AnyInputFieldFocused()) return;
+        if (!Input.anyKeyDown || m_shouldIgnoreInput) return;
         
         foreach (var cmd in m_binds
                      .Where(bind => Input.GetKeyDown(bind.Key))
