@@ -19,50 +19,56 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <NoWarn>1701;1702;Harmony003;</NoWarn>
   </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(GameDir)' == ''">
+    <GameDir>C:\Program Files (x86)\Steam\steamapps\common\STRAFTAT</GameDir>
+    <GameLibs>$(GameDir)\STRAFTAT_Data\Managed</GameLibs>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.16" IncludeAssets="compile" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" />
   </ItemGroup>
   
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\Libs\Assembly-CSharp-publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp" Publicize="true">
+      <HintPath>$(GameLibs)\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="com.rlabrecque.steamworks.net">
-      <HintPath>..\Libs\com.rlabrecque.steamworks.net.dll</HintPath>
+      <HintPath>$(GameLibs)\com.rlabrecque.steamworks.net.dll</HintPath>
     </Reference>
     <Reference Include="ComputerysModdingUtilities">
-      <HintPath>..\Libs\ComputerysModdingUtilities.dll</HintPath>
+      <HintPath>$(GameLibs)\ComputerysModdingUtilities.dll</HintPath>
     </Reference>
     <Reference Include="DOTween">
-      <HintPath>..\Libs\DOTween.dll</HintPath>
+      <HintPath>$(GameLibs)\DOTween.dll</HintPath>
     </Reference>
     <Reference Include="FishNet.Runtime">
-      <HintPath>..\Libs\FishNet.Runtime.dll</HintPath>
+      <HintPath>$(GameLibs)\FishNet.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Heathen.Steamworks">
-      <HintPath>..\Libs\Heathen.Steamworks-publicized.dll</HintPath>
+    <Reference Include="Heathen.Steamworks" Publicize="true">
+      <HintPath>$(GameLibs)\Heathen.Steamworks.dll</HintPath>
     </Reference>
     <Reference Include="Heathen.Steamworks.Examples">
-      <HintPath>..\Libs\Heathen.Steamworks.Examples.dll</HintPath>
+      <HintPath>$(GameLibs)\Heathen.Steamworks.Examples.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\Libs\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(GameLibs)\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="ProfanityFilter">
-      <HintPath>..\Libs\ProfanityFilter.dll</HintPath>
+      <HintPath>$(GameLibs)\ProfanityFilter.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem">
-      <HintPath>..\Libs\Unity.InputSystem.dll</HintPath>
+      <HintPath>$(GameLibs)\Unity.InputSystem.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\Libs\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>$(GameLibs)\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\Libs\UnityEngine.UI.dll</HintPath>
+      <HintPath>$(GameLibs)\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   
