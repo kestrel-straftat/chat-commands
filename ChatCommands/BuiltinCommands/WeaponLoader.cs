@@ -13,7 +13,7 @@ internal static class WeaponLoader
         foreach (var weapon in Resources.LoadAll<Weapon>("RandomWeapons")) {
             string normalisedPrefabName = weapon.name.ToUpper().Replace(" ", "");
             string normalisedWeaponName = weapon.GetComponent<ItemBehaviour>().weaponName.ToUpper().Replace(" ", "");
-            m_weaponPrefabs.TryAdd(weapon.name.ToUpper().Replace(" ", ""), weapon);
+            m_weaponPrefabs.TryAdd(normalisedPrefabName, weapon);
             m_nameRedirects.TryAdd(normalisedWeaponName, normalisedPrefabName);
         }
     }
@@ -21,9 +21,9 @@ internal static class WeaponLoader
     public static bool TryGetWeapon(string name, out Weapon prefab) {
         // trygetvalue slop. we love trygetvalue
         string normalisedName = name.ToUpper().Replace(" ", "");
-        return m_weaponPrefabs.TryGetValue(normalisedName, out prefab)
-               || m_nameRedirects.TryGetValue(normalisedName, out var redirected)
-               && m_weaponPrefabs.TryGetValue(redirected, out prefab);
+        return m_weaponPrefabs.TryGetValue(normalisedName, out prefab) // try use the internal name
+               || m_nameRedirects.TryGetValue(normalisedName, out var redirected) // didn't work, get the internal name from the display name
+               && m_weaponPrefabs.TryGetValue(redirected, out prefab); // use that name to get the prefab
     }
 
     public static Weapon RandomWeapon() {
