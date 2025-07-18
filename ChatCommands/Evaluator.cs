@@ -60,7 +60,7 @@ public static class Evaluator
             return null;
         }
         
-        if (cmd.flags.HasFlag(CommandFlags.IngameOnly) && Settings.Instance.inMenu) {
+        if (cmd.flags.HasFlag(CommandFlags.IngameOnly) && PauseManager.Instance.inMainMenu) {
             SystemMessage($"The command \"{name}\" can only be run while in a game!");
             return null;
         }

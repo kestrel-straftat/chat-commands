@@ -35,10 +35,8 @@ public static class AdminCommands
         Utils.SaveToJsonFile(new SavedLists{bans = m_bannedPlayers, ignores = m_ignoredPlayers}, m_savePath);    
     }
     
-    [Command("ignore", "ignores a player, hiding their chat messages. if no steam id is provided, ignores your opponent.")]
-    public static string Ignore(ulong steamID = 0) {
-        if (steamID == 0 && (steamID = GetOpponentId()) == 0)
-            throw new CommandException("could not get opponent's steam id");
+    [Command("ignore", "ignores a player, hiding their chat messages.")]
+    public static string Ignore(ulong steamID) {
         
         if (!m_ignoredPlayers.Add(steamID))
             throw new CommandException($"\"{steamID}\" is already ignored");
@@ -47,10 +45,8 @@ public static class AdminCommands
         return $"ignored {steamID}";
     }
 
-    [Command("unignore", "unignores a player. if no steam id is provided, unignores your opponent.")]
-    public static string Unignore(ulong steamID = 0) {
-        if (steamID == 0 && (steamID = GetOpponentId()) == 0)
-            throw new CommandException("could not get opponent's steam id");
+    [Command("unignore", "unignores a player.")]
+    public static string Unignore(ulong steamID) {
         
         if (!m_ignoredPlayers.Remove(steamID))
             throw new CommandException($"\"{steamID}\" was not ignored");
@@ -77,10 +73,8 @@ public static class AdminCommands
         return "cleared ignorelist";
     }
     
-    [Command("ban", "bans a player, automatically kicking them from any of your lobbies. if no steam id is provided, bans your opponent.")]
-    public static string Ban(ulong steamID = 0) {
-        if (steamID == 0 && (steamID = GetOpponentId()) == 0)
-            throw new CommandException("could not get opponent's steam id");
+    [Command("ban", "bans a player, automatically kicking them from any of your lobbies.")]
+    public static string Ban(ulong steamID) {
         
         if (!m_bannedPlayers.Add(steamID))
             throw new CommandException($"\"{steamID}\" is already banned");
@@ -90,10 +84,8 @@ public static class AdminCommands
         return $"banned {steamID}";
     }
 
-    [Command("unban", "unbans a player. if no steam id is provided, unbans your opponent.")]
-    public static string Unban(ulong steamID = 0) {
-        if (steamID == 0 && (steamID = GetOpponentId()) == 0)
-            throw new CommandException("could not get opponent's steam id");
+    [Command("unban", "unbans a player.")]
+    public static string Unban(ulong steamID) {
         
         if (!m_bannedPlayers.Remove(steamID))
             throw new CommandException($"\"{steamID}\" was not banned");
@@ -118,11 +110,6 @@ public static class AdminCommands
         m_bannedPlayers.Clear();
         SaveToJson();
         return "cleared banlist";
-    }
-
-    // returns 0 if no opponent found
-    private static ulong GetOpponentId() {
-        return ClientInstance.Instance.Enemy()?.PlayerSteamID ?? 0;
     }
     
     [HarmonyPatch(typeof(LobbyChatUILogic))]

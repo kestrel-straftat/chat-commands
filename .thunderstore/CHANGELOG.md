@@ -1,6 +1,6 @@
 ### v1.0.3
 
-(to push)
+- Fixed for straftat 1.3.3c
 - Improved `ban` command: the mod now warns you when joining the lobby of someone on your banlist
 - Removed `weapons` command
 - `weapon` command now takes an extra optional parameter: `count`
