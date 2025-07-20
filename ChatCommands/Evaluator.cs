@@ -67,6 +67,7 @@ public static class Evaluator
         
         if (cmd.flags.HasFlag(CommandFlags.HostOnly) && !InstanceFinder.IsHost) {
             SystemMessage($"The command \"{name}\" can only be run as a lobby host!");
+            return null;
         }
         
         if (cmd.flags.HasFlag(CommandFlags.ExplorationOnly) && !SceneMotor.Instance.testMap) {
