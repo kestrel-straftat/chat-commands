@@ -55,7 +55,7 @@ public static class UtilityCommands
     public static void Clear() => ChatPatches.ClearChat();
 
     [Command("say", "sends a message in chat")]
-    public static void Say(string message) => ChatPatches.SendChatMessage(FilterSystem.Filter.CensorString(message));
+    public static void Say(string message) => ChatPatches.SendChatMessage(FilterSystem.FilterString(message));
     
     private static CommandFlags[] m_allFlags = (CommandFlags[])Enum.GetValues(typeof(CommandFlags));
     
