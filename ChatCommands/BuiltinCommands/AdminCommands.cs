@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using ChatCommands.Attributes;
 using FishNet;
-using FishNet.Managing;
 using HarmonyLib;
 using HeathenEngineering.DEMO;
 using HeathenEngineering.SteamworksIntegration;

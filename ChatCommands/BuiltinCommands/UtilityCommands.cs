@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ChatCommands.Attributes;
@@ -56,7 +55,7 @@ public static class UtilityCommands
     public static void Clear() => ChatPatches.ClearChat();
 
     [Command("say", "sends a message in chat")]
-    public static void Say(string message) => ChatPatches.SendChatMessage(ProfanityFilterProvider.Filter.CensorString(message));
+    public static void Say(string message) => ChatPatches.SendChatMessage(FilterSystem.Filter.CensorString(message));
     
     private static CommandFlags[] m_allFlags = (CommandFlags[])Enum.GetValues(typeof(CommandFlags));
     
