@@ -1,3 +1,7 @@
+### v1.0.4
+
+- Fixed `say` command
+
 ### v1.0.3
 
 - Fixed for straftat 1.3.3c
