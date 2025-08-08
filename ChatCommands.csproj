@@ -75,9 +75,6 @@
   <ItemGroup>
     <None Include=".github\**" />
     <None Include=".thunderstore\**" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <Content Include="ChatCommands.csproj.user" />
   </ItemGroup>
 
