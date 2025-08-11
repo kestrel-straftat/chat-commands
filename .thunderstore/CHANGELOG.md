@@ -1,3 +1,7 @@
+### v1.0.5
+
+- Fixed `fov` command
+
 ### v1.0.4
 
 - Fixed `say` command

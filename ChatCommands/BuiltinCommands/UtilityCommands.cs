@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using ChatCommands.Attributes;
+using HarmonyLib;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -164,6 +166,8 @@ public static class SettingsCommands
 {
     // Pseudo-convars. i think this is a (relatively) nice pattern to follow that means i don't have to actually implement convars. :3
     // the min value of the numeric type used represents a get and is the default parameter. its a weird way of doing it but it works well enough
+    
+    // 11-8-25 note: getting a bit gross now lol. probably needs an upgrade soon
 
     private static float PseudoConvarFloat(float value, Func<float> getter, Func<float, float> setter) {
         return value != float.MinValue ? setter(value) : getter();
@@ -174,39 +178,44 @@ public static class SettingsCommands
     }
     
     // kiiinda slow but id rather have ease of use here
-    private static float PseudoConvarSetting(float value, string settingName) {
-        var field = typeof(Settings).GetField(settingName);
+    private static float PseudoConvarSetting(float value, FieldInfo settingField, string settingName) {
         var instance = Settings.Instance;
         if (value == float.MinValue)
-            return (float)field.GetValue(instance);
+            return (float)settingField.GetValue(instance);
         
-        field.SetValue(instance, value);
+        settingField.SetValue(instance, value);
         PlayerPrefs.SetFloat(settingName, value);
         PlayerPrefs.Save();
         return value;
     }
     
-    [Command("maxfps", "changes max fps", CommandFlags.Silent)]
+    private static readonly FieldInfo fovSetting = AccessTools.Field(typeof(Settings), nameof(Settings.normalFovValue));
+    private static readonly FieldInfo brightnessSetting = AccessTools.Field(typeof(Settings), nameof(Settings.brightness));
+    private static readonly FieldInfo mouseSensitivitySetting = AccessTools.Field(typeof(Settings), nameof(Settings.mouseSensitivity));
+    private static readonly FieldInfo mouseAimSensitivitySetting = AccessTools.Field(typeof(Settings), nameof(Settings.mouseAimSensitivity));
+    private static readonly FieldInfo mouseAimScopeSensitivitySetting = AccessTools.Field(typeof(Settings), nameof(Settings.mouseAimScopeSensitivity));
+        
+    [Command("maxfps", "*temporarily* changes max fps", CommandFlags.Silent)]
     public static int MaxFps(int fps = int.MinValue)
         => PseudoConvarInt(fps, () => Application.targetFrameRate, f => Application.targetFrameRate = f);
 
     [Command("fov", "changes fov", CommandFlags.Silent)]
     public static float Fov(float fov = float.MinValue)
-        => PseudoConvarSetting(fov, "fovValue");
+        => PseudoConvarSetting(fov, fovSetting, "fovValue"); // why is this one inconsistent. thanks sirius
 
     [Command("gamma", "changes gamma (brightness)", CommandFlags.Silent)]
     public static float Gamma(float gamma = float.MinValue)
-        => PseudoConvarSetting(gamma, "brightness");
+        => PseudoConvarSetting(gamma, brightnessSetting, nameof(Settings.brightness));
     
     [Command("sensitivity", "changes sensitivity", CommandFlags.Silent)]
     public static float Sensitivity(float sensitivity = float.MinValue)
-        => PseudoConvarSetting(sensitivity, "mouseSensitivity");
+        => PseudoConvarSetting(sensitivity, mouseSensitivitySetting, nameof(Settings.mouseSensitivity));
     
     [Command("aimsensitivity", "changes aiming sensitivity", CommandFlags.Silent)]
     public static float AimSensitivity(float sensitivity = float.MinValue)
-        => PseudoConvarSetting(sensitivity, "mouseAimSensitivity");
+        => PseudoConvarSetting(sensitivity, mouseAimSensitivitySetting, nameof(Settings.mouseAimSensitivity));
     
     [Command("scopesensitivity", "changes scope sensitivity", CommandFlags.Silent)]
     public static float ScopeSensitivity(float sensitivity = float.MinValue)
-        => PseudoConvarSetting(sensitivity, "mouseAimScopeSensitivity");
+        => PseudoConvarSetting(sensitivity, mouseAimScopeSensitivitySetting, nameof(Settings.mouseAimScopeSensitivity));
 }

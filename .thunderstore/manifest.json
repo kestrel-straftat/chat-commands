@@ -1,6 +1,6 @@
 {
   "name": "Chat_Commands",
-  "version_number": "1.0.4",
+  "version_number": "1.0.5",
   "website_url": "https://github.com/kestrel-straftat/chat-commands",
   "description": "Adds a console command system and various helpful admin/ utility commands",
   "dependencies": ["BepInEx-BepInExPack-5.4.2100"]
