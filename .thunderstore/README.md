@@ -11,9 +11,18 @@ them you might find helpful include:
 - Spawning any weapon while in exploration mode
 - Ignoring players, hiding their chat messages from you
 - Banning players from your lobbies, instantly kicking them if they join
-- Changing a few settings like brightness or sensitivity without opening the settings menu~ and setting them to exact
+- Changing a few settings like brightness, fov or sensitivity without opening the settings menu ~ and setting them to exact
 values instead of using a slider
 - Binding any command or sequence of commands to a key **or the mousewheel**
+
+## Quickstart for people who can't be bothered to read below
+
+### `/help` to see a list of available commands (here are some useful ones)
+- `/weapon <weapon name>` or `/w <weapon name>` to spawn in a weapon in exploration mode
+- `/fov <value>` to set your fov
+- `/sensitivity <value>` to set your sensitivity
+- `/ban <steam id>` to ban a player from your lobbies
+- `/ignore <steam id>` to hide a player's chat messages from you
 
 ## Syntax and basic guide to commands
 
@@ -51,7 +60,7 @@ For any further help, you can find me @sneaky_kestrel in the #modding channel in
 - Download the zip from the Thunderstore page, take out `ChatCommands.dll`, put it somewhere safe and then add
 a reference to it in your project.
 - Add a `[BepInDependency(ChatCommands.PluginInfo.PLUGIN_GUID)]` attribute to your main plugin class
-- If you are planning to upload your mod to Thunderstore, add the package's dependency string, that can be found
+- If you are planning to upload your mod to Thunderstore, add the package's dependency string, which can be found
 on the Thunderstore page, to your manifest.json.
 - Call `CommandRegistry.RegisterCommandsFromAssembly()` in your plugin's startup logic.
 
@@ -62,18 +71,38 @@ To create a command, add the `[Command]` attribute to any **static** method. The
 - `name`: Self explanatory. the name of your command.
 - `description`: A short description of your command and what it does~ this will be shown in the output of `help`.
 - `flags`: Flags that define extra behaviour your command requires, or how it should be used. Not required, and
-defaults to `CommandFlags.None`. This is a flags enum, so multiple flags can be applied with a logical or.
+defaults to `CommandFlags.None`. This is a flags enum, so multiple flags can be applied with a btiwise or.
 
 The return value of a command will be output to chat by default~ if you'd like to return a value but wouldn't
 like it to be printed you can add `CommandFlags.Silent` to your command.
 
-By default, the following types are supported as parameters for commands. See below on how to add support for
-custom types.
+By default, the following types are supported as parameters for commands. See the custom parsers section for a guide on
+how to add support for custom types.
 
-- Any system type that implements `IConvertible`
-- `UnityEngine.KeyCode`~ also supports the standard source engine key names
-- `bool`~ a custom parser that also parses numbers i.e. 1 -> true, 0 -> false.
+- Any type that implements `IConvertible`
+- `UnityEngine.KeyCode` ~ also supports the standard source engine key names
+- `bool` ~ a custom parser that also parses numbers i.e. 1 -> true, 0 -> false.
 - `Vector2` & `Vector3`
+
+#### Flags
+
+Flags apply additional conditions or behaviours to your command.
+
+Requirement Flags:
+- `HostOnly` - Must be host
+- `ExplorationOnly` - Must be in exploration mode
+- `IngameOnly`- Must be in a map
+
+Behaviour Flags:
+- `Silent` - The command's return value will not be sent in chat
+- `TryRunOnHost` - The command will be run on the host's machine if possible
+(the host must have the mod adding the command installed for this)
+
+Developers should note that the TryRunOnHost command flag will output the command's return value back to the user, but
+will not send it for piping to other commands. As such, it's best to only use this flag on commands that don't return a
+value to prevent confusion (unless absolutely necessary).
+To get the steam ID of the sender of the TryRunOnHost command, make the **last parameter** of your command a `CSteamID` called
+`requester` with a default value (`CSteamID requester = default`). This will be automatically filled in by the command evaluator.
 
 #### Aliases
 
