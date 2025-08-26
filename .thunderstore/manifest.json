@@ -3,5 +3,8 @@
   "version_number": "1.1.5",
   "website_url": "https://github.com/kestrel-straftat/chat-commands",
   "description": "Adds a console command system and various helpful admin/ utility commands",
-  "dependencies": ["BepInEx-BepInExPack-5.4.2100"]
+  "dependencies": [
+    "BepInEx-BepInExPack-5.4.2100",
+    "straftatmodding-MyceliumNetworking-1.1.15"
+  ]
 }
