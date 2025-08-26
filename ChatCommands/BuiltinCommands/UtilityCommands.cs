@@ -16,12 +16,12 @@ public static class UtilityCommands
     public static string Echo(string input) => input;
 
     [Command("eval", "evaluates its input as a command")]
-    public static void Eval(string input) => Evaluator.Evaluate(input);
+    public static void Eval(string input) => Evaluator.Instance.Evaluate(input);
 
     [Command("repeat", "executes a command a specified number of times")]
     public static void Repeat(string command, int n) {
         for (int i = 0; i < n; ++i) {
-            Evaluator.Evaluate(command);
+            Evaluator.Instance.Evaluate(command);
         }
     }
     

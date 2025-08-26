@@ -93,7 +93,7 @@ public static class ChatPatches
         public static bool DetectCommand(TMP_InputField ___inputField) {
             var text = ___inputField.text;
             if (!text.StartsWith(c_commandPrefix)) return true;
-            Evaluator.Evaluate(text.Remove(0, c_commandPrefix.Length));
+            Evaluator.Instance.Evaluate(text.Remove(0, c_commandPrefix.Length));
             return false;
         }
     }

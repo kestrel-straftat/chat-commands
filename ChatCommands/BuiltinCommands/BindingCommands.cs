@@ -34,10 +34,10 @@ public static class BindingCommands
         if (!Cursor.visible)
             switch (Input.mouseScrollDelta.y) {
                 case > 0 when m_binds.TryGetValue(c_mwheelupKey, out var ucmds):
-                    ucmds.ForEach(Evaluator.Evaluate);
+                    ucmds.ForEach(Evaluator.Instance.Evaluate);
                     break;
                 case < 0 when m_binds.TryGetValue(c_mwheeldownKey, out var dcmds):
-                    dcmds.ForEach(Evaluator.Evaluate);
+                    dcmds.ForEach(Evaluator.Instance.Evaluate);
                     break;
             }
         
@@ -46,7 +46,7 @@ public static class BindingCommands
         foreach (var cmd in m_binds
                      .Where(bind => Input.GetKeyDown(bind.Key))
                      .SelectMany(bind => bind.Value)) {
-            Evaluator.Evaluate(cmd);
+            Evaluator.Instance.Evaluate(cmd);
         }
     }
     

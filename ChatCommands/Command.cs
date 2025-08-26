@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Steamworks;
 
 namespace ChatCommands;
 
@@ -12,6 +13,7 @@ public enum CommandFlags
     ExplorationOnly = 2,    // Commands that can only be run in map exploration mode
     IngameOnly = 4,         // Commands that can only be run when in a map
     Silent = 8,             // Commands whose output is not sent in the chat
+    TryRunOnHost = 16,      // Commands which will be run on the host if possible
 }
 
 public class Command
@@ -26,6 +28,7 @@ public class Command
     public readonly int maxParameters;
     public readonly int minParameters;
     public readonly int registryPriority;
+    public readonly bool hasRequesterParameter;
     public bool isOverriden;
 
     public Command(MethodInfo method, string name, string description = "no description found", string categoryName = "Misc", CommandFlags flags = CommandFlags.None, int registryPriority = 0, params string[] aliases) {
