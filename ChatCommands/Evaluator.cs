@@ -65,7 +65,7 @@ public class Evaluator
     // a special parameter that will be filled with the steam ID of the user who requested
     // a command run on TryRunOnHost commands
     internal static bool IsRequesterParameter(ParameterInfo parameter) {
-        return parameter.ParameterType == typeof(CSteamID) && parameter.Name == "requester";
+        return parameter.ParameterType == typeof(CSteamID) && parameter.Name == "requester" && parameter.HasDefaultValue;
     }
 
     private static bool TryParseParameters(Command cmd, CSteamID requester, in string[] stringArgs, out object[] parsedArgs, out string err) {
@@ -73,11 +73,11 @@ public class Evaluator
         parsedArgs = new object[cmd.maxParameters];
         
         if (providedCount < cmd.minParameters) {
-            err = $"Mismatched parameter counts: command \"{cmd.name}\" expects at least {cmd.minParameters}, but {providedCount} {(providedCount == 1 ? "was" : "were")} provided.";
+            err = $"Too few parameters: the command \"{cmd.name}\" expects at least {cmd.minParameters}, but {providedCount} {(providedCount == 1 ? "was" : "were")} provided!";
             return false;
         }
         if (providedCount > cmd.maxParameters) {
-            err = $"Mismatched parameter counts: command \"{cmd.name}\" expects at most {cmd.maxParameters}, but {providedCount} {(providedCount == 1 ? "was" : "were")} provided.";
+            err = $"Too many parameters: the command \"{cmd.name}\" expects at most {cmd.maxParameters}, but {providedCount} {(providedCount == 1 ? "was" : "were")} provided!";
             return false;
         }
         
@@ -89,7 +89,7 @@ public class Evaluator
                     parsedArgs[i] = ParserLocator.ParseTo(paramType, stringArgs[i]);
                 }
                 catch {
-                    err = $"Invalid parameter: command \"{cmd.name}\" expects the parameter \"{cmd.parameterInfos[i].Name}\" to be of type {paramType.Name}, but the provided parameter (\"{stringArgs[i]}\") could not be converted to it!";
+                    err = $"The command \"{cmd.name}\" expects the parameter \"{cmd.parameterInfos[i].Name}\" to be of type {paramType.Name}, but the provided parameter (\"{stringArgs[i]}\") could not be converted to it!";
                     return false;
                 }
             }
@@ -97,11 +97,11 @@ public class Evaluator
                 // append default values to call, if any exist
                 parsedArgs[i] = cmd.parameterInfos[i].DefaultValue;
             }
-            
-            // set requester if present
-            if (IsRequesterParameter(cmd.parameterInfos[i])) {
-                parsedArgs[i] = requester;
-            }
+        }
+        
+        // set requester if present
+        if (cmd.hasRequesterParameter) {
+            parsedArgs[^1] = requester;
         }
 
         err = null;

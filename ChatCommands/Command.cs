@@ -42,6 +42,10 @@ public class Command
         parameterInfos = method.GetParameters();
         maxParameters = parameterInfos.Length;
         minParameters = parameterInfos.Count(p => !p.HasDefaultValue);
+        if (maxParameters > 0 && Evaluator.IsRequesterParameter(parameterInfos[^1])) {
+            hasRequesterParameter = true;
+            --maxParameters;
+        }
     }
     
     public object Invoke(object[] args) => method.Invoke(null, args);

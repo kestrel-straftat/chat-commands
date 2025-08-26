@@ -4,7 +4,6 @@ using ChatCommands.BuiltinCommands;
 using ComputerysModdingUtilities;
 using HarmonyLib;
 using MyceliumNetworking;
-using Steamworks;
 using UnityEngine;
 
 [assembly: StraftatMod(isVanillaCompatible: true)]

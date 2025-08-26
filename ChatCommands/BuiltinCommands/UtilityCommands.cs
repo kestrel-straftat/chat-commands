@@ -124,20 +124,22 @@ public static class UtilityCommands
             if (i < command.aliases.Length - 1) builder.Append(", ");
         }
         builder.AppendLine("]");
+
+        var actualMaxParameters = command.hasRequesterParameter ? command.maxParameters : command.maxParameters - 1;
         
         builder.Append("parameters: [");
-        if (command.maxParameters == 0) {
+        if (actualMaxParameters == 0) {
             builder.Append("none");
         }
         else {
-            for (var i = 0; i < command.maxParameters; ++i) {
+            for (var i = 0; i < actualMaxParameters; ++i) {
                 var param = command.parameterInfos[i];
                 if (param.HasDefaultValue)
                     builder.Append(SmallText("(optional) "));
                 builder.Append(param.Name)
                     .Append(": ")
                     .Append(param.ParameterType.Name.ToLower());
-                if (i < command.parameterInfos.Length - 1) builder.Append(", ");
+                if (i < actualMaxParameters - 1) builder.Append(", ");
             }
         }
         builder.AppendLine("]");
