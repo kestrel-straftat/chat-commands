@@ -70,7 +70,7 @@ public class Evaluator
 
     private static bool TryParseParameters(Command cmd, CSteamID requester, in string[] stringArgs, out object[] parsedArgs, out string err) {
         var providedCount = stringArgs.Length;
-        parsedArgs = new object[cmd.maxParameters];
+        parsedArgs = new object[cmd.parameterInfos.Length];
         
         if (providedCount < cmd.minParameters) {
             err = $"Too few parameters: the command \"{cmd.name}\" expects at least {cmd.minParameters}, but {providedCount} {(providedCount == 1 ? "was" : "were")} provided!";
@@ -82,7 +82,7 @@ public class Evaluator
         }
         
         // attempt to convert and populate command params
-        for (int i = 0; i < cmd.maxParameters; ++i) {
+        for (int i = 0; i < cmd.parameterInfos.Length; ++i) {
             if (i < providedCount) {
                 var paramType = cmd.parameterInfos[i].ParameterType;
                 try {
