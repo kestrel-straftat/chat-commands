@@ -132,9 +132,10 @@ public static class UtilityCommands
         else {
             for (var i = 0; i < command.maxParameters; ++i) {
                 var param = command.parameterInfos[i];
-                if (param.HasDefaultValue)
-                    builder.Append(SmallText("(optional) "))
-                    .Append(param.Name)
+                if (param.HasDefaultValue) {
+                    builder.Append(SmallText("(optional) "));
+                }
+                builder.Append(param.Name)
                     .Append(": ")
                     .Append(param.ParameterType.Name.ToLower());
                 if (i < command.maxParameters - 1) builder.Append(", ");
