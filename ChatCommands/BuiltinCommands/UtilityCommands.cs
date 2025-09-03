@@ -142,12 +142,16 @@ public static class UtilityCommands
         }
         builder.AppendLine("]");
 
-        if (command.flags != CommandFlags.None) {
+        var flags = m_allFlags
+            .Cast<Enum>()
+            .Where(f => command.flags.HasFlag(f) && !f.Equals(CommandFlags.None))
+            .ToArray();
+        
+        if (flags.Length > 0) {
             builder.Append("flags: [");
-            for (var i = 0; i < m_allFlags.Length; ++i) {
-                if (m_allFlags[i] == 0 || !command.flags.HasFlag(m_allFlags[i])) continue;
-                builder.Append(m_allFlags[i]);
-                if (i < m_allFlags.Length - 1) builder.Append(", ");
+            for (var i = 0; i < flags.Length; ++i) {
+                builder.Append(flags[i]);
+                if (i < flags.Length - 1) builder.Append(", ");
             }
             builder.AppendLine("]");
         }
