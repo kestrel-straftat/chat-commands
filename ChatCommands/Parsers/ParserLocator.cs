@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
 
 namespace ChatCommands.Parsers;
 
@@ -47,20 +48,26 @@ public static class ParserLocator
         result = Convert.ChangeType(input, resultType);
         return true;
     }
-
+    
     public static object ParseTo(Type type, string input) {
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+            type = Nullable.GetUnderlyingType(type);
+        }
         if (TryIConvertible(type, input, out var result)) {
             return result;
         }
-        if (m_parsers.TryGetValue(type, out var parser)) {
+        if (m_parsers.TryGetValue(type!, out var parser)) {
             return parser.Parse(input);
         }
         throw new NotSupportedException("Type not supported.");
     }
 
     public static bool TryParseTo(Type type, string input, out object result) {
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+            type = Nullable.GetUnderlyingType(type);
+        }
         if (TryIConvertible(type, input, out result)) return true;
-        if (!m_parsers.TryGetValue(type, out var parser)) return false;
+        if (!m_parsers.TryGetValue(type!, out var parser)) return false;
         try {
             result = parser.Parse(input);
         }

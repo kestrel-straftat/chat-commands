@@ -135,9 +135,17 @@ public static class UtilityCommands
                 if (param.HasDefaultValue) {
                     builder.Append(SmallText("(optional) "));
                 }
+                var paramType = param.ParameterType;
+                string paramTypeName;
+                if (paramType.IsGenericType && paramType.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+                    paramTypeName = Nullable.GetUnderlyingType(paramType)?.Name ?? "unknown";
+                }
+                else {
+                    paramTypeName = paramType.Name;
+                }
                 builder.Append(param.Name)
                     .Append(": ")
-                    .Append(param.ParameterType.Name.ToLower());
+                    .Append(paramTypeName.ToLower());
                 if (i < command.maxParameters - 1) builder.Append(", ");
             }
         }
@@ -174,24 +182,25 @@ public static class SettingsCommands
     
     // 11-8-25 note: getting a bit gross now lol. probably needs an upgrade soon
 
-    private static float PseudoConvarFloat(float value, Func<float> getter, Func<float, float> setter) {
-        return value != float.MinValue ? setter(value) : getter();
+    private static float PseudoConvarFloat(float? value, Func<float> getter, Func<float, float> setter) {
+        return value is null ? getter() : setter(value.Value);
     }
     
-    private static int PseudoConvarInt(int value, Func<int> getter, Func<int, int> setter) {
-        return value != int.MinValue ? setter(value) : getter();
+    private static int PseudoConvarInt(int? value, Func<int> getter, Func<int, int> setter) {
+        return value is null ? getter() : setter(value.Value);
     }
     
     // kiiinda slow but id rather have ease of use here
-    private static float PseudoConvarSetting(float value, FieldInfo settingField, string settingName) {
+    private static float PseudoConvarSetting(float? value, FieldInfo settingField, string settingName) {
         var instance = Settings.Instance;
-        if (value == float.MinValue)
+        if (value is null) {
             return (float)settingField.GetValue(instance);
-        
-        settingField.SetValue(instance, value);
-        PlayerPrefs.SetFloat(settingName, value);
+        }
+
+        settingField.SetValue(instance, value.Value);
+        PlayerPrefs.SetFloat(settingName, value.Value);
         PlayerPrefs.Save();
-        return value;
+        return value.Value;
     }
     
     private static readonly FieldInfo fovSetting = AccessTools.Field(typeof(Settings), nameof(Settings.normalFovValue));
@@ -201,26 +210,26 @@ public static class SettingsCommands
     private static readonly FieldInfo mouseAimScopeSensitivitySetting = AccessTools.Field(typeof(Settings), nameof(Settings.mouseAimScopeSensitivity));
         
     [Command("maxfps", "*temporarily* changes max fps", CommandFlags.Silent)]
-    public static int MaxFps(int fps = int.MinValue)
+    public static int MaxFps(int? fps = null)
         => PseudoConvarInt(fps, () => Application.targetFrameRate, f => Application.targetFrameRate = f);
 
     [Command("fov", "changes fov", CommandFlags.Silent)]
-    public static float Fov(float fov = float.MinValue)
+    public static float Fov(float? fov = null)
         => PseudoConvarSetting(fov, fovSetting, "fovValue"); // why is this one inconsistent. thanks sirius
 
     [Command("gamma", "changes gamma (brightness)", CommandFlags.Silent)]
-    public static float Gamma(float gamma = float.MinValue)
+    public static float Gamma(float? gamma = null)
         => PseudoConvarSetting(gamma, brightnessSetting, nameof(Settings.brightness));
     
     [Command("sensitivity", "changes sensitivity", CommandFlags.Silent)]
-    public static float Sensitivity(float sensitivity = float.MinValue)
+    public static float Sensitivity(float? sensitivity = null)
         => PseudoConvarSetting(sensitivity, mouseSensitivitySetting, nameof(Settings.mouseSensitivity));
     
     [Command("aimsensitivity", "changes aiming sensitivity", CommandFlags.Silent)]
-    public static float AimSensitivity(float sensitivity = float.MinValue)
+    public static float AimSensitivity(float? sensitivity = null)
         => PseudoConvarSetting(sensitivity, mouseAimSensitivitySetting, nameof(Settings.mouseAimSensitivity));
     
     [Command("scopesensitivity", "changes scope sensitivity", CommandFlags.Silent)]
-    public static float ScopeSensitivity(float sensitivity = float.MinValue)
+    public static float ScopeSensitivity(float? sensitivity = null)
         => PseudoConvarSetting(sensitivity, mouseAimScopeSensitivitySetting, nameof(Settings.mouseAimScopeSensitivity));
 }
