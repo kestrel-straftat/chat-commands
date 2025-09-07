@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using FishNet;
+using FishNet.Managing.Object;
+using HarmonyLib;
 using UnityEngine;
 
 namespace ChatCommands.BuiltinCommands;
@@ -7,23 +10,37 @@ namespace ChatCommands.BuiltinCommands;
 internal static class WeaponLoader
 {
     private static Dictionary<string, Weapon> m_weaponPrefabs = [];
-    private static Dictionary<string, string> m_nameRedirects = [];
+    private static Dictionary<string, PhysicsProp> m_propPrefabs = [];
 
     public static void Init() {
         foreach (var weapon in Resources.LoadAll<Weapon>("RandomWeapons")) {
             string normalisedPrefabName = weapon.name.ToUpper().Replace(" ", "");
             string normalisedWeaponName = weapon.GetComponent<ItemBehaviour>().weaponName.ToUpper().Replace(" ", "");
             m_weaponPrefabs.TryAdd(normalisedPrefabName, weapon);
-            m_nameRedirects.TryAdd(normalisedWeaponName, normalisedPrefabName);
+            m_weaponPrefabs.TryAdd(normalisedWeaponName, weapon);
+        }
+
+        var nobPrefabs = (InstanceFinder.NetworkManager.SpawnablePrefabs as DefaultPrefabObjects)!.Prefabs;
+        var props = nobPrefabs
+            .Select(nob => nob.GetComponent<PhysicsProp>())
+            .Where(x => x);
+        
+        foreach (var prop in props) {
+            string normalisedPrefabName = prop.name.ToUpper().Replace(" ", "");
+            string normalisedPropName = prop.popupText.ToUpper().Replace(" ", "");
+            m_propPrefabs.TryAdd(normalisedPrefabName, prop);
+            m_propPrefabs.TryAdd(normalisedPropName, prop);
         }
     }
 
-    public static bool TryGetWeapon(string name, out Weapon prefab) {
-        // trygetvalue slop. we love trygetvalue
+    public static bool TryGetProp(string name, out PhysicsProp prefab) {
         string normalisedName = name.ToUpper().Replace(" ", "");
-        return m_weaponPrefabs.TryGetValue(normalisedName, out prefab) // try use the internal name
-               || m_nameRedirects.TryGetValue(normalisedName, out var redirected) // didn't work, get the internal name from the display name
-               && m_weaponPrefabs.TryGetValue(redirected, out prefab); // use that name to get the prefab
+        return m_propPrefabs.TryGetValue(normalisedName, out prefab);
+    }
+
+    public static bool TryGetWeapon(string name, out Weapon prefab) {
+        string normalisedName = name.ToUpper().Replace(" ", "");
+        return m_weaponPrefabs.TryGetValue(normalisedName, out prefab);
     }
 
     public static Weapon RandomWeapon() {

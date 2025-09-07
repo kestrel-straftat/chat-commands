@@ -21,6 +21,21 @@ public static class FunCommands
         return requester == default ? Settings.Instance.localPlayer.transform : SteamIDToPlayer(requester).transform;
     }
 
+    [Command("prop", "spawns a prop", c_weaponCommandFlags)]
+    [CommandAliases("p")]
+    public static void Prop(string propName, int count = 1, CSteamID requester = default) {
+        if (WeaponLoader.TryGetProp(propName, out var prop)) {
+            var playerTransform = SteamIDToTransform(requester);
+            for (int i = 0; i < count; ++i) {
+                var obj = Object.Instantiate(prop, playerTransform.position + (Vector3.up * 0.35f), playerTransform.rotation).gameObject;
+                InstanceFinder.ServerManager.Spawn(obj);
+            }
+        }
+        else {
+            throw new CommandException($"No prop found with name {propName}");
+        }
+    }
+    
     [Command("weapon", "spawns a weapon", c_weaponCommandFlags)]
     [CommandAliases("w")]
     public static void Weapon(string weaponName, int count = 1, CSteamID requester = default) {

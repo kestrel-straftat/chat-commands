@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using System;
+using BepInEx;
 using BepInEx.Logging;
 using ChatCommands.BuiltinCommands;
 using ComputerysModdingUtilities;
@@ -25,7 +26,6 @@ internal class Plugin : BaseUnityPlugin
         Instance = this;
         Logger = base.Logger;
         
-        WeaponLoader.Init();
         BindingCommands.Init();
         AdminCommands.Init();
         CommandRegistry.RegisterCommandsFromAssembly();
@@ -37,7 +37,11 @@ internal class Plugin : BaseUnityPlugin
         new Harmony(PluginInfo.PLUGIN_GUID).PatchAll();
         Logger.LogInfo("Hiiiiiiiiiiii :3");
     }
-    
+
+    private void Start() {
+        WeaponLoader.Init();
+    }
+
     private void Update() {
         BindingCommands.Update();
     }
