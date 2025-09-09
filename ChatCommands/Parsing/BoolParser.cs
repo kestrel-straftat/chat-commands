@@ -1,11 +1,11 @@
 using System;
 
-namespace ChatCommands.Parsers;
+namespace ChatCommands.Parsing;
 
-internal class BoolParser : ParserBase
+internal class BoolParser : ITypeParseExtension
 {
-    public override Type ParseResultType => typeof(bool);
-    public override object Parse(string value) {
+    public Type Target => typeof(bool);
+    public object Parse(string value) {
         if (bool.TryParse(value, out var parsed))
             return parsed;
 

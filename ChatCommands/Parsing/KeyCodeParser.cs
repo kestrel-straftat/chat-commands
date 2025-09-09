@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ChatCommands.Parsers;
+namespace ChatCommands.Parsing;
 
-internal class KeyCodeParser : ParserBase
+internal class KeyCodeParser : ITypeParseExtension
 {
-    public override Type ParseResultType => typeof(KeyCode);
-    public override object Parse(string value) {
+    public Type Target => typeof(KeyCode);
+    public object Parse(string value) {
         // this needs precedence~ otherwise numbers will parse incorrectly.
         if (m_alternativeStrings.TryGetValue(value.ToLower(), out var fallback))
             return fallback;

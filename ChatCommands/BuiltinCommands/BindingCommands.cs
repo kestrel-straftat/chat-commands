@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ChatCommands.Attributes;
-using ChatCommands.Parsers;
+using ChatCommands.Parsing;
 using UnityEngine;
 
 namespace ChatCommands.BuiltinCommands;

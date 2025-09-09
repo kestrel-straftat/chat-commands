@@ -2,12 +2,12 @@ using System;
 using System.Globalization;
 using UnityEngine;
 
-namespace ChatCommands.Parsers;
+namespace ChatCommands.Parsing;
 
-public class Vector2Parser : ParserBase
+public class Vector2Parser : ITypeParseExtension
 {
-    public override Type ParseResultType => typeof(Vector2);
-    public override object Parse(string value) {
+    public Type Target => typeof(Vector2);
+    public object Parse(string value) {
         var result = new Vector2();
         value = string.Join(' ', value.Split([',', '(', ')'], StringSplitOptions.RemoveEmptyEntries));
         string[] xy = value.Split(' ', StringSplitOptions.RemoveEmptyEntries);

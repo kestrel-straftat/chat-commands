@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using ChatCommands.Parsers;
+using ChatCommands.Parsing;
 using FishNet;
 using MyceliumNetworking;
 using Newtonsoft.Json;
