@@ -7,6 +7,7 @@ using FishNet;
 using HarmonyLib;
 using HeathenEngineering.DEMO;
 using HeathenEngineering.SteamworksIntegration;
+using Steamworks;
 
 namespace ChatCommands.BuiltinCommands;
 
@@ -33,32 +34,39 @@ public static class AdminCommands
     private static void SaveToJson() {
         Utils.SaveToJsonFile(new SavedLists{bans = m_bannedPlayers, ignores = m_ignoredPlayers}, m_savePath);    
     }
+
+    private static string UsernameOrId(this ParameterTypes.Player player) {
+        var name = player.Username;
+        return (name is "" or "[unknown]") ? player.steamID.ToString() : name;
+    }
     
     [Command("ignore", "ignores a player, hiding their chat messages.")]
-    public static string Ignore(ulong steamID) {
-        
-        if (!m_ignoredPlayers.Add(steamID))
-            throw new CommandException($"\"{steamID}\" is already ignored");
-        
+    public static string Ignore(ParameterTypes.Player target) {
+        if (!m_ignoredPlayers.Add(target.steamID.m_SteamID)) {
+            throw new CommandException($"\"{target.UsernameOrId()}\" is already ignored!");
+        }
+
         SaveToJson();
-        return $"ignored {steamID}";
+        return $"ignored {target.UsernameOrId()}";
     }
 
     [Command("unignore", "unignores a player.")]
-    public static string Unignore(ulong steamID) {
-        
-        if (!m_ignoredPlayers.Remove(steamID))
-            throw new CommandException($"\"{steamID}\" was not ignored");
+    public static string Unignore(ParameterTypes.Player target) {
+        if (!m_ignoredPlayers.Remove(target.steamID.m_SteamID)) {
+            throw new CommandException($"\"{target.UsernameOrId()}\" was not ignored!");
+        }
 
         SaveToJson();
-        return $"unignored {steamID}";
+        return $"unignored {target.UsernameOrId()}";
     }
 
     [Command("ignorelist", "lists ignored players")]
     public static string ListIgnored() {
-        StringBuilder builder = new();
+        var builder = new StringBuilder();
         builder.AppendLine("<u>ignored players</u>");
-        if (m_ignoredPlayers.Count == 0) builder.AppendLine("[none]");
+        if (m_ignoredPlayers.Count == 0) {
+            builder.AppendLine("[none]");
+        }
         foreach (var player in m_ignoredPlayers) {
             builder.AppendLine(player.ToString());
         }
@@ -69,35 +77,37 @@ public static class AdminCommands
     public static string ClearIgnores() {
         m_ignoredPlayers.Clear();
         SaveToJson();
-        return "cleared ignorelist";
+        return "cleared ignored list";
     }
     
     [Command("ban", "bans a player, automatically kicking them from any of your lobbies.")]
-    public static string Ban(ulong steamID) {
-        
-        if (!m_bannedPlayers.Add(steamID))
-            throw new CommandException($"\"{steamID}\" is already banned");
-        
+    public static string Ban(ParameterTypes.Player target) {
+        if (!m_bannedPlayers.Add(target.steamID.m_SteamID)) {
+            throw new CommandException($"\"{target.UsernameOrId()}\" is already banned!");
+        }
+
         LobbyControllerPatch.KickBannedPlayers(InstanceFinder.NetworkManager.IsHost);
         SaveToJson();
-        return $"banned {steamID}";
+        return $"banned {target.UsernameOrId()}";
     }
 
     [Command("unban", "unbans a player.")]
-    public static string Unban(ulong steamID) {
-        
-        if (!m_bannedPlayers.Remove(steamID))
-            throw new CommandException($"\"{steamID}\" was not banned");
+    public static string Unban(ParameterTypes.Player target) {
+        if (!m_bannedPlayers.Remove(target.steamID.m_SteamID)) {
+            throw new CommandException($"\"{target.UsernameOrId()}\" was not banned");
+        }
 
         SaveToJson();
-        return $"unbanned {steamID}";
+        return $"unbanned {target.UsernameOrId()}";
     }
 
     [Command("banlist", "lists banned players")]
     public static string ListBanned() {
-        StringBuilder builder = new();
+        var builder = new StringBuilder();
         builder.AppendLine("<u>banned players</u>");
-        if (m_bannedPlayers.Count == 0) builder.AppendLine("[none]");
+        if (m_bannedPlayers.Count == 0) {
+            builder.AppendLine("[none]");
+        }
         foreach (var player in m_bannedPlayers) {
             builder.AppendLine(player.ToString());
         }
@@ -108,7 +118,7 @@ public static class AdminCommands
     public static string ClearBans() {
         m_bannedPlayers.Clear();
         SaveToJson();
-        return "cleared banlist";
+        return "cleared banned list";
     }
     
     [HarmonyPatch(typeof(LobbyChatUILogic))]
