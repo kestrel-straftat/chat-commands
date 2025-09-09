@@ -31,6 +31,7 @@ internal class Plugin : BaseUnityPlugin
         CommandRegistry.RegisterCommandsFromAssembly();
         
         MyceliumNetwork.RegisterNetworkObject(Evaluator.Instance, c_myceliumID);
+        MyceliumNetwork.RegisterNetworkObject(TeleportationCommands.Instance, c_myceliumID);
         MyceliumNetwork.RegisterPlayerDataKey("chatCommandsInstalled");
         MyceliumNetwork.LobbyEntered += () => MyceliumNetwork.SetPlayerData("chatCommandsInstalled", true);
         
