@@ -88,8 +88,16 @@ public class Evaluator
                 try {
                     parsedArgs[i] = ParserLocator.ParseTo(paramType, stringArgs[i]);
                 }
-                catch {
-                    err = $"The command \"{cmd.name}\" expects the parameter \"{cmd.parameterInfos[i].Name}\" to be of type {paramType.Name}, but the provided parameter (\"{stringArgs[i]}\") could not be converted to it!";
+                catch (Exception e) {
+                    if (e is NotSupportedException) {
+                        err = $"Parameter \"{cmd.parameterInfos[i].Name}\" is of type {paramType.Name}, which chat commands does not support!";
+                    } else if (e is InvalidCastException && e.Message != "") {
+                        err = $"Parameter \"{cmd.parameterInfos[i].Name}\" could not be parsed: {e.Message}";
+                    }
+                    else {
+                        err = $"Parameter \"{cmd.parameterInfos[i].Name}\" is of type {paramType.Name}, but the provided parameter (\"{stringArgs[i]}\") could not be converted to it!";
+                    }
+
                     return false;
                 }
             }
