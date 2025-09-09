@@ -71,23 +71,25 @@ public static class UtilityCommands
                 builder.AppendHelpTextForCommand(cmd);
             }
             else {
-                if (!CommandRegistry.CategoryExists(commandOrCategoryName))
+                if (!CommandRegistry.CategoryExists(commandOrCategoryName)) {
                     throw new CommandException($"No command or category with the name {commandOrCategoryName} found.");
+                }
 
                 // ok, try searching for commands with that category name
                 var commandsInCategory = CommandRegistry.Commands.Values
-                    .Where(c => string.Equals(c.categoryName, commandOrCategoryName, StringComparison.InvariantCultureIgnoreCase))
+                    .Where(c => string.Equals(c.categoryName, commandOrCategoryName, StringComparison.OrdinalIgnoreCase))
                     .Distinct()
                     .ToArray();
-                
-                if (commandsInCategory.Length == 0)
-                    throw new CommandException($"No command or category with the name {commandOrCategoryName} found.");
 
-                builder.AppendLine($"<u><size=150%><#B4F6B7>{commandsInCategory[0].categoryName}</color></size></u>")
+                if (commandsInCategory.Length == 0) {
+                    throw new CommandException($"No command or category with the name {commandOrCategoryName} found.");
+                }
+
+                builder.AppendLine(HeaderText(commandsInCategory[0].categoryName))
                     .AppendLine();
+                
                 foreach (var command in commandsInCategory.OrderBy(c => c.name)) {
-                    builder.AppendHelpTextForCommand(command);
-                    builder.AppendLine().AppendLine();
+                    builder.AppendHelpTextForCommand(command).AppendLine().AppendLine();
                 }
             }
         }
@@ -95,11 +97,16 @@ public static class UtilityCommands
         else {
             string currentCategory = "";
             // Distinct() needed to ignore aliases as they're kept in the same array as the name
-            foreach (var command in CommandRegistry.Commands.Values.OrderBy(c => c.categoryName).ThenBy(c => c.name).Distinct()) {
+            var allCommands = CommandRegistry.Commands.Values
+                .OrderBy(c => c.categoryName)
+                .ThenBy(c => c.name)
+                .Distinct();
+            
+            foreach (var command in allCommands) {
 
                 if (command.categoryName != currentCategory) {
                     currentCategory = command.categoryName;
-                    builder.AppendLine($"<u><size=150%><#B4F6B7>{command.categoryName}</color></size></u>");
+                    builder.AppendLine(HeaderText(command.categoryName));
                     builder.AppendLine();
                 }
 
@@ -111,17 +118,25 @@ public static class UtilityCommands
         return builder.ToString();
     }
 
-    private static void AppendHelpTextForCommand(this StringBuilder builder, Command command) {
-        if (command.isOverriden)
+    private static StringBuilder AppendHelpTextForCommand(this StringBuilder builder, Command command) {
+        if (command.isOverriden) {
             builder.Append(SmallText("(overriden) "));
-        builder.AppendLine($"<u>{command.name}</u>");
-        builder.AppendLine(command.description);
+        }
 
+        builder.AppendLine($"<u>{command.name}</u>")
+            .AppendLine(command.description); 
+        
         builder.Append("aliases: [");
-        if (command.aliases.Length == 0) builder.Append("none");
+        if (command.aliases.Length == 0) {
+            builder.Append("none");
+        }
+        
         for (var i = 0; i < command.aliases.Length; ++i) {
             builder.Append(command.aliases[i]);
-            if (i < command.aliases.Length - 1) builder.Append(", ");
+            
+            if (i < command.aliases.Length - 1) {
+                builder.Append(", ");
+            }
         }
         builder.AppendLine("]");
         
@@ -129,24 +144,26 @@ public static class UtilityCommands
         if (command.maxParameters == 0) {
             builder.Append("none");
         }
-        else {
-            for (var i = 0; i < command.maxParameters; ++i) {
-                var param = command.parameterInfos[i];
-                if (param.HasDefaultValue) {
-                    builder.Append(SmallText("(optional) "));
-                }
-                var paramType = param.ParameterType;
-                string paramTypeName;
-                if (paramType.IsGenericType && paramType.GetGenericTypeDefinition() == typeof(Nullable<>)) {
-                    paramTypeName = Nullable.GetUnderlyingType(paramType)?.Name ?? "unknown";
-                }
-                else {
-                    paramTypeName = paramType.Name;
-                }
-                builder.Append(param.Name)
-                    .Append(": ")
-                    .Append(paramTypeName.ToLower());
-                if (i < command.maxParameters - 1) builder.Append(", ");
+        
+        for (var i = 0; i < command.maxParameters; ++i) {
+            var parameter = command.parameterInfos[i];
+            if (parameter.HasDefaultValue) {
+                builder.Append(SmallText("(optional) "));
+            }
+            var paramType = parameter.ParameterType;
+            string paramTypeName;
+            if (paramType.IsGenericType && !paramType.IsGenericTypeDefinition && paramType.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+                paramTypeName = Nullable.GetUnderlyingType(paramType)?.Name ?? "unknown";
+            }
+            else {
+                paramTypeName = paramType.Name;
+            }
+            builder.Append(parameter.Name)
+                .Append(": ")
+                .Append(paramTypeName.ToLower());
+            
+            if (i < command.maxParameters - 1) {
+                builder.Append(", ");
             }
         }
         builder.AppendLine("]");
@@ -165,12 +182,20 @@ public static class UtilityCommands
             builder.AppendLine("]");
         }
 
+        var returnType = command.method.ReturnType;
+        
         builder.Append("returns: ")
-            .Append(command.method.ReturnType == typeof(void) ? "none" : command.method.ReturnType.Name.ToLower());
+            .Append(returnType == typeof(void) ? "none" : returnType.Name.ToLower());
+        
+        return builder;
     }
     
     private static string SmallText(string text) {
         return $"<alpha=#AA><voffset=0.1em><size=65%>{text}</size></voffset><alpha=#FF>";
+    }
+
+    private static string HeaderText(string text) {
+        return $"<u><size=150%><#B4F6B7>{text}</color></size></u>";
     }
 }
 
