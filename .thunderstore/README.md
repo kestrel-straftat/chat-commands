@@ -68,9 +68,9 @@ on the Thunderstore page, to your manifest.json.
 
 To create a command, add the `[Command]` attribute to any **static** method. The attribute has a few parameters:
 
-- `name`: Self explanatory. the name of your command.
+- `name`: Self explanatory. The name of your command.
 - `description`: A short description of your command and what it does~ this will be shown in the output of `help`.
-- `flags`: Flags that define extra behaviour your command requires, or how it should be used. Not required, and
+- `flags`: Flags that define requirements or additional behaviours for your command. Not required, and
 defaults to `CommandFlags.None`. This is a flags enum, so multiple flags can be applied with a btiwise or.
 
 The return value of a command will be output to chat by default~ if you'd like to return a value but wouldn't
@@ -80,8 +80,8 @@ By default, the following types are supported as parameters for commands. See th
 how to add support for custom types.
 
 - Any type that implements `IConvertible`
-- `UnityEngine.KeyCode` ~ also supports the standard source engine key names
-- `bool` ~ a custom parser that also parses numbers i.e. 1 -> true, 0 -> false.
+- `KeyCode` ~ also supports the standard source engine key names
+- `bool` ~ also parses numbers (i.e. 1 -> true, 0 -> false)
 - `Vector2` & `Vector3`
 
 #### Flags
@@ -132,11 +132,11 @@ by any other commands by default. I have no idea when this might be useful. It's
 
 #### Custom Parsers
 
-If you'd like to use types that don't have built in parsers as parameters to commands, you can implement `ParserBase`
-and create your own! You'll need to implement two members: `ParseResultType`, a property that returns the type your
-parser converts to, and `object Parse(string value)`, a method that parses a string input to your desired type and
-returns the value boxed to an object. After implementing the class for all types you wish to convert to, call
-`ParserLocator.RegisterParsersFromAssembly()` in your plugin's startup logic to register all your parsers.
+If you'd like to use types that don't have built in parsers as parameters to commands, you can implement `IParsingExtension`
+in a new class and create your own! You'll need to implement two members: `Target`, a property that returns the type your
+parser converts to, and `Parse`, a method that parses a string input to your desired type and
+returns the value boxed to an object. To register your extensions, call `ParserLocator.RegisterExtensionsFromAssembly()`
+in your plugin's startup logic.
 Also worth noting is the fact that `ParserLocator`'s `ParseTo()`, `TryParseTo()` and their generic counterparts are
 public for your utility.
 
