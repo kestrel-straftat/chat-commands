@@ -7,7 +7,8 @@ using FishNet;
 using HarmonyLib;
 using HeathenEngineering.DEMO;
 using HeathenEngineering.SteamworksIntegration;
-using Steamworks;
+using ChatCommands.Utils;
+using PlayerParam = ChatCommands.Utils.ParameterTypes.Player;
 
 namespace ChatCommands.BuiltinCommands;
 
@@ -26,22 +27,22 @@ public static class AdminCommands
     private static string m_savePath = Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_GUID + ".adminlists.json");
 
     public static void Init() {
-        var save = Utils.LoadFromJsonFile<SavedLists?>(m_savePath);
+        var save = JsonUtils.FromJsonFile<SavedLists?>(m_savePath);
         m_ignoredPlayers = save?.ignores ?? [];
         m_bannedPlayers = save?.bans ?? [];
     }
 
     private static void SaveToJson() {
-        Utils.SaveToJsonFile(new SavedLists{bans = m_bannedPlayers, ignores = m_ignoredPlayers}, m_savePath);    
+        JsonUtils.ToJsonFile(new SavedLists{bans = m_bannedPlayers, ignores = m_ignoredPlayers}, m_savePath);    
     }
 
-    private static string UsernameOrId(this ParameterTypes.Player player) {
+    private static string UsernameOrId(this PlayerParam player) {
         var name = player.Username;
         return (name is "" or "[unknown]") ? player.steamID.ToString() : name;
     }
     
     [Command("ignore", "ignores a player, hiding their chat messages.")]
-    public static string Ignore(ParameterTypes.Player target) {
+    public static string Ignore(PlayerParam target) {
         if (!m_ignoredPlayers.Add(target.steamID.m_SteamID)) {
             throw new CommandException($"\"{target.UsernameOrId()}\" is already ignored!");
         }
@@ -51,7 +52,7 @@ public static class AdminCommands
     }
 
     [Command("unignore", "unignores a player.")]
-    public static string Unignore(ParameterTypes.Player target) {
+    public static string Unignore(PlayerParam target) {
         if (!m_ignoredPlayers.Remove(target.steamID.m_SteamID)) {
             throw new CommandException($"\"{target.UsernameOrId()}\" was not ignored!");
         }
@@ -81,7 +82,7 @@ public static class AdminCommands
     }
     
     [Command("ban", "bans a player, automatically kicking them from any of your lobbies.")]
-    public static string Ban(ParameterTypes.Player target) {
+    public static string Ban(PlayerParam target) {
         if (!m_bannedPlayers.Add(target.steamID.m_SteamID)) {
             throw new CommandException($"\"{target.UsernameOrId()}\" is already banned!");
         }
@@ -92,7 +93,7 @@ public static class AdminCommands
     }
 
     [Command("unban", "unbans a player.")]
-    public static string Unban(ParameterTypes.Player target) {
+    public static string Unban(PlayerParam target) {
         if (!m_bannedPlayers.Remove(target.steamID.m_SteamID)) {
             throw new CommandException($"\"{target.UsernameOrId()}\" was not banned");
         }

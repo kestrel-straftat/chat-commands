@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using ChatCommands.Utils;
 using FishNet;
 using FishNet.Managing.Object;
 using HarmonyLib;
@@ -44,10 +45,10 @@ internal static class WeaponLoader
     }
 
     public static Weapon RandomWeapon() {
-        return Utils.RandomValues(m_weaponPrefabs).Take(1).First();
+        return m_weaponPrefabs.RandomValues().Take(1).First();
     }
 
     public static Weapon[] RandomWeapons(int count) {
-        return Utils.RandomValues(m_weaponPrefabs).Take(count).ToArray();
+        return m_weaponPrefabs.RandomValues().Take(count).ToArray();
     }
 }

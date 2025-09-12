@@ -5,7 +5,7 @@ using MyceliumNetworking;
 using Steamworks;
 using UnityEngine;
 
-namespace ChatCommands.BuiltinCommands.ParameterTypes;
+namespace ChatCommands.Utils.ParameterTypes;
 
 public class Player
 {
@@ -42,7 +42,8 @@ public class PlayerParser : IParsingExtension
 {
     public Type Target => typeof(Player);
     public object Parse(string value) {
-        if (ulong.TryParse(value, out var id) && new CSteamID(id) is var steamID && steamID.IsValid()) {
+        CSteamID steamID;
+        if (ulong.TryParse(value, out var id) && (steamID = new CSteamID(id)).IsValid()) {
             return new Player(steamID);
         }
         
@@ -50,6 +51,6 @@ public class PlayerParser : IParsingExtension
             return player;
         }
         
-        throw new InvalidCastException($"\"{value}\" is not a valid steam id, or the user with that name is not in your lobby!");
+        throw new InvalidCastException($"\"{value}\" is not a valid steam id, or no user with that name is in your lobby!");
     }
 }

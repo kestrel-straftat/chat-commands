@@ -4,7 +4,11 @@ using System.Linq;
 using System.Text;
 using ChatCommands.Attributes;
 using ChatCommands.Parsing;
+using ChatCommands.Utils;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace ChatCommands.BuiltinCommands;
 
@@ -23,11 +27,11 @@ public static class BindingCommands
     private static bool m_shouldIgnoreInput = false;
     
     public static void Init() {
-        m_binds = Utils.LoadFromJsonFile<Dictionary<KeyCode, List<string>>>(m_savePath) ?? [];
+        m_binds = JsonUtils.FromJsonFile<Dictionary<KeyCode, List<string>>>(m_savePath) ?? [];
     }
 
     public static void FixedUpdate() {
-        m_shouldIgnoreInput = Utils.AnyInputFieldFocused();
+        m_shouldIgnoreInput = AnyInputFieldFocused();
     }
     
     public static void Update() {
@@ -63,7 +67,7 @@ public static class BindingCommands
         else if (!m_binds.TryAdd(keyCode, [command]))
             throw new CommandException("unknown error while adding bind");
         
-        Utils.SaveToJsonFile(m_binds, m_savePath);
+        JsonUtils.ToJsonFile(m_binds, m_savePath);
         return $"bound {key.ToLower()} -> \"{command}\"";
     }
 
@@ -72,7 +76,7 @@ public static class BindingCommands
         var keyCode = ParseKey(key);
         
         m_binds.Remove(keyCode);
-        Utils.SaveToJsonFile(m_binds, m_savePath);
+        JsonUtils.ToJsonFile(m_binds, m_savePath);
         return $"unbound {key.ToLower()}";
     }
     
@@ -91,7 +95,7 @@ public static class BindingCommands
     [Command("unbindall", "removes all bindings")]
     public static string UnbindAll() {
         m_binds.Clear();
-        Utils.SaveToJsonFile(m_binds, m_savePath);
+        JsonUtils.ToJsonFile(m_binds, m_savePath);
         return "removed all bindings";
     }
     
@@ -116,5 +120,16 @@ public static class BindingCommands
         }
         var list = builder.ToString();
         return list == string.Empty ? "no binds" : list;
+    }
+    
+    private static bool AnyInputFieldFocused() {
+        var currentSelected = EventSystem.current.currentSelectedGameObject;
+        if (!currentSelected) return false;
+        var tmpField = currentSelected.GetComponent<TMP_InputField>();
+        if (tmpField && tmpField.isFocused)
+            return true;
+
+        var unityField = currentSelected.GetComponent<InputField>();
+        return unityField && unityField.isFocused;
     }
 }

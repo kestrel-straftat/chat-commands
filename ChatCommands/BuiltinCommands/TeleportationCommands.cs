@@ -1,6 +1,7 @@
 using ChatCommands.Attributes;
 using MyceliumNetworking;
 using UnityEngine;
+using PlayerParam = ChatCommands.Utils.ParameterTypes.Player;
 
 namespace ChatCommands.BuiltinCommands;
 
@@ -42,7 +43,7 @@ public class TeleportationCommands
 
     [Command("teleportplayer", "teleports a player to another player. the target must have chat commands installed.", c_tpCommandFlags)]
     [CommandAliases("tpp")]
-    public static void TeleportPlayer(ParameterTypes.Player target, ParameterTypes.Player destination, bool includeRotation = false, bool cancelMovement = true) {
+    public static void TeleportPlayer(PlayerParam target, PlayerParam destination, bool includeRotation = false, bool cancelMovement = true) {
         if (!MyceliumNetwork.GetPlayerData<bool>(target.steamID, "chatCommandsInstalled")) {
             throw new CommandException("The target does no have chat commands installed!");
         }
