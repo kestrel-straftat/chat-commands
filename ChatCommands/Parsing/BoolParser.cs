@@ -2,7 +2,7 @@ using System;
 
 namespace ChatCommands.Parsing;
 
-internal class BoolParser : ITypeParseExtension
+internal class BoolParser : IParsingExtension
 {
     public Type Target => typeof(bool);
     public object Parse(string value) {

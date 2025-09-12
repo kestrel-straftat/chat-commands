@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ChatCommands.Parsing;
 
-internal class KeyCodeParser : ITypeParseExtension
+internal class KeyCodeParser : IParsingExtension
 {
     public Type Target => typeof(KeyCode);
     public object Parse(string value) {

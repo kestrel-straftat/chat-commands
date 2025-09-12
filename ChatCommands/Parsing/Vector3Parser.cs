@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ChatCommands.Parsing;
 
-public class Vector3Parser : ITypeParseExtension
+public class Vector3Parser : IParsingExtension
 {
     public Type Target => typeof(Vector3);
     public object Parse(string value) {

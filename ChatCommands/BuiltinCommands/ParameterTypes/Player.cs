@@ -38,7 +38,7 @@ public class Player
     }
 }
 
-public class PlayerParser : ITypeParseExtension
+public class PlayerParser : IParsingExtension
 {
     public Type Target => typeof(Player);
     public object Parse(string value) {

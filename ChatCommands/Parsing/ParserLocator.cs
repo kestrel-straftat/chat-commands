@@ -8,35 +8,35 @@ namespace ChatCommands.Parsing;
 
 public static class ParserLocator
 {
-    private static Dictionary<Type, ITypeParseExtension> m_extensions = [];
+    private static Dictionary<Type, IParsingExtension> m_extensions = [];
 
     static ParserLocator() {
         // register all chat commands' default parse extensions
-        RegisterParseExtensionsFromAssembly();
+        RegisterExtensionsFromAssembly();
     }
 
     /// <summary>
-    /// Registers all <see cref="ITypeParseExtension"/> implementations from the calling assembly.
+    /// Registers all <see cref="IParsingExtension"/> implementations from the calling assembly.
     /// </summary>
-    public static void RegisterParseExtensionsFromAssembly() => RegisterParseExtensionsFromAssembly(Assembly.GetCallingAssembly());
+    public static void RegisterExtensionsFromAssembly() => RegisterExtensionsFromAssembly(Assembly.GetCallingAssembly());
     
     /// <summary>
-    /// Registers all <see cref="ITypeParseExtension"/> implementations from a specified assembly.
+    /// Registers all <see cref="IParsingExtension"/> implementations from the specified assembly.
     /// </summary>
-    public static void RegisterParseExtensionsFromAssembly(Assembly assembly) {
+    public static void RegisterExtensionsFromAssembly(Assembly assembly) {
         var extensionTypes = assembly
             .GetTypes()
-            .Where(t => typeof(ITypeParseExtension).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            .Where(t => typeof(IParsingExtension).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
         
         foreach (var type in extensionTypes) {
-            var instance = Activator.CreateInstance(type) as ITypeParseExtension;
+            var instance = Activator.CreateInstance(type) as IParsingExtension;
             m_extensions.TryAdd(instance!.Target, instance);
         }
     }
     
     /// <summary>
     /// Converts the specified string representation of a value to its equivalent
-    /// of the specified type. Tries registered <see cref="ITypeParseExtension"/> implementations, then tries
+    /// of the specified type. Tries registered <see cref="IParsingExtension"/> implementations, then tries
     /// <see cref="IConvertible"/>.
     /// </summary>
     /// <param name="type">The type to convert the value to.</param>
