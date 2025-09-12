@@ -44,8 +44,11 @@ public class TeleportationCommands
     [Command("teleportplayer", "teleports a player to another player. the target must have chat commands installed.", c_tpCommandFlags)]
     [CommandAliases("tpp")]
     public static void TeleportPlayer(PlayerParam target, PlayerParam destination, bool includeRotation = false, bool cancelMovement = true) {
+        if (!target.InCurrentLobby || !destination.InCurrentLobby) {
+            throw new CommandException("Both the target and destination players must be in the lobby!");
+        }
         if (!MyceliumNetwork.GetPlayerData<bool>(target.steamID, "chatCommandsInstalled")) {
-            throw new CommandException("The target does no have chat commands installed!");
+            throw new CommandException("The target does not have chat commands installed!");
         }
         
         var targetPlayer = target.SpawnedPlayer?.GetComponent<FirstPersonController>();
