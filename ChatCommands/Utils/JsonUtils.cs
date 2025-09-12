@@ -1,8 +1,5 @@
 using System.IO;
 using Newtonsoft.Json;
-using TMPro;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace ChatCommands.Utils;
 
