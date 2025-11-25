@@ -1,3 +1,7 @@
+### v1.2.6
+
+- Fixed `maxfps` command
+
 ### v1.2.5
 
 #### General

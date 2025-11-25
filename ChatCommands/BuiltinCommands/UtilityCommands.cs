@@ -228,15 +228,25 @@ public static class SettingsCommands
         return value.Value;
     }
     
+    private static readonly FieldInfo targetFpsSetting = AccessTools.Field(typeof(Settings), nameof(Settings.targetFps));
     private static readonly FieldInfo fovSetting = AccessTools.Field(typeof(Settings), nameof(Settings.normalFovValue));
     private static readonly FieldInfo brightnessSetting = AccessTools.Field(typeof(Settings), nameof(Settings.brightness));
     private static readonly FieldInfo mouseSensitivitySetting = AccessTools.Field(typeof(Settings), nameof(Settings.mouseSensitivity));
     private static readonly FieldInfo mouseAimSensitivitySetting = AccessTools.Field(typeof(Settings), nameof(Settings.mouseAimSensitivity));
     private static readonly FieldInfo mouseAimScopeSensitivitySetting = AccessTools.Field(typeof(Settings), nameof(Settings.mouseAimScopeSensitivity));
+
+    [Command("maxfps", "changes max fps (-1 for uncapped)", CommandFlags.Silent)]
+    public static int MaxFps(int? fps = null) {
+        if (fps is not null) {
+            Settings.Instance.targetFpsToggle = fps != -1;
+            Settings.Instance.targetFps = fps.Value;
+            PlayerPrefs.SetInt("targetFpsToggle", fps == -1 ? 0 : 1);
+            PlayerPrefs.SetInt("targetFps", fps.Value);
+            PlayerPrefs.Save();
+        }
+        return Settings.Instance.targetFps;
+    }
         
-    [Command("maxfps", "*temporarily* changes max fps", CommandFlags.Silent)]
-    public static int MaxFps(int? fps = null)
-        => PseudoConvarInt(fps, () => Application.targetFrameRate, f => Application.targetFrameRate = f);
 
     [Command("fov", "changes fov", CommandFlags.Silent)]
     public static float Fov(float? fov = null)
