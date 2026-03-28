@@ -1,3 +1,7 @@
+### v1.2.7
+
+- Fixed for straftat 1.4.3
+
 ### v1.2.6
 
 - Fixed `maxfps` command

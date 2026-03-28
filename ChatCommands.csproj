@@ -4,7 +4,7 @@
     <AssemblyName>ChatCommands</AssemblyName>
     <Description>A library mod for straftat that allows developers to create their own chat commands</Description>
     <Product>kestrel.straftat.chatcommands</Product>
-    <Version>1.2.6</Version>
+    <Version>1.2.7</Version>
     <TargetFramework>netstandard2.1</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>preview</LangVersion>
@@ -51,9 +51,6 @@
     </Reference>
     <Reference Include="Heathen.Steamworks" Publicize="true">
       <HintPath>$(GameLibDir)\Heathen.Steamworks.dll</HintPath>
-    </Reference>
-    <Reference Include="Heathen.Steamworks.Examples">
-      <HintPath>$(GameLibDir)\Heathen.Steamworks.Examples.dll</HintPath>
     </Reference>
     <Reference Include="MyceliumNetworkingForStraftat">
       <HintPath>..\Libs\MyceliumNetworkingForStraftat.dll</HintPath>
