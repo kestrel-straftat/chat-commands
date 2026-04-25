@@ -19,9 +19,9 @@ values instead of using a slider
 
 ### `/help` to see a list of available commands (here are some useful ones)
 - `/weapon <weapon name>` or `/w <weapon name>` to spawn in a weapon in exploration mode
+- `/prop <prop name>` or `/p <prop name>` to spawn in a prop (barrels, etc.) in exploration mode
 - `/fov <value>` to set your fov
 - `/sensitivity <value>` to set your sensitivity
-- `/ban <steam id>` to ban a player from your lobbies
 - `/ignore <steam id>` to hide a player's chat messages from you
 
 ## Syntax and basic guide to commands

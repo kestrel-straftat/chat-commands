@@ -203,7 +203,7 @@ public static class UtilityCommands
 public static class SettingsCommands
 {
     // Pseudo-convars. i think this is a (relatively) nice pattern to follow that means i don't have to actually implement convars. :3
-    // the min value of the numeric type used represents a get and is the default parameter. its a weird way of doing it but it works well enough
+    // null represents a get and is the default parameter. its a weird way of doing it but it works well enough
     
     // 11-8-25 note: getting a bit gross now lol. probably needs an upgrade soon
 

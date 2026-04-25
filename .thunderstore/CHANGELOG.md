@@ -1,3 +1,8 @@
+### v1.2.8
+
+- Fixed for straftat 1.4.6
+- Removed `ban`, `unban`, `banlist` & `clearbans`, as lobby bans have been in the game for quite a while now.
+
 ### v1.2.7
 
 - Fixed for straftat 1.4.3

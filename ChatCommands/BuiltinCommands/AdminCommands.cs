@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using ChatCommands.Attributes;
-using FishNet;
 using HarmonyLib;
 using HeathenEngineering.DEMO;
 using HeathenEngineering.SteamworksIntegration;
@@ -81,79 +79,11 @@ public static class AdminCommands
         return "cleared ignored list";
     }
     
-    [Command("ban", "bans a player, automatically kicking them from any of your lobbies.")]
-    public static string Ban(PlayerParam target) {
-        if (!m_bannedPlayers.Add(target.steamID.m_SteamID)) {
-            throw new CommandException($"\"{target.UsernameOrId()}\" is already banned!");
-        }
-
-        LobbyControllerPatch.KickBannedPlayers(InstanceFinder.NetworkManager.IsHost);
-        SaveToJson();
-        return $"banned {target.UsernameOrId()}";
-    }
-
-    [Command("unban", "unbans a player.")]
-    public static string Unban(PlayerParam target) {
-        if (!m_bannedPlayers.Remove(target.steamID.m_SteamID)) {
-            throw new CommandException($"\"{target.UsernameOrId()}\" was not banned");
-        }
-
-        SaveToJson();
-        return $"unbanned {target.UsernameOrId()}";
-    }
-
-    [Command("banlist", "lists banned players")]
-    public static string ListBanned() {
-        var builder = new StringBuilder();
-        builder.AppendLine("<u>banned players</u>");
-        if (m_bannedPlayers.Count == 0) {
-            builder.AppendLine("[none]");
-        }
-        foreach (var player in m_bannedPlayers) {
-            builder.AppendLine(player.ToString());
-        }
-        return builder.ToString();
-    }
-
-    [Command("clearbans", "removes ALL bans. use with caution!")]
-    public static string ClearBans() {
-        m_bannedPlayers.Clear();
-        SaveToJson();
-        return "cleared banned list";
-    }
-    
     [HarmonyPatch(typeof(LobbyChatUILogic))]
     internal static class LobbyChatUILogicPatch
     {
         [HarmonyPatch("HandleChatMessage")]
         [HarmonyPrefix]
         public static bool DontHandleIfIgnored(LobbyChatMsg message) => !m_ignoredPlayers.Contains(message.sender.SteamId);
-    }
-
-    [HarmonyPatch(typeof(LobbyController))]
-    internal static class LobbyControllerPatch
-    {
-        private static List<PlayerListItem> m_playerListItems;
-
-        public static void KickBannedPlayers(bool isHost) {
-            foreach (var player in m_playerListItems.Where(player => m_bannedPlayers.Contains(player.PlayerSteamID))) {
-                if (isHost) {
-                    PauseManager.Instance.WriteLog($"Kicked \"{player.PlayerName}\": banned from this lobby");
-                    player.KickPlayer();
-                }
-                else {
-                    PauseManager.Instance.WriteOfflineLog($"Warning: the player \"{player.PlayerName}\" is on your ban list!");
-                }
-            }
-        }
-        
-        [HarmonyPatch("Start")]
-        [HarmonyPrefix]
-        public static void CapturePlayerlist(List<PlayerListItem> ___PlayerListItems) => m_playerListItems = ___PlayerListItems;
-
-        [HarmonyPatch("CreateClientPlayerItem")]
-        [HarmonyPatch("CreateHostPlayerItem")]
-        [HarmonyPostfix]
-        public static void HandleBans() => KickBannedPlayers(InstanceFinder.NetworkManager.IsHost); 
     }
 }
